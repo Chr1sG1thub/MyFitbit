@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Strava Cycling PWA</title>
+  <meta name="viewport" content="width=device-width">
+</head>
+<body style="font-family: Arial; padding: 20px; max-width: 800px; margin: auto;">
+  <h1>🚴 Strava Cycling App</h1>
+  
+  <button onclick="connectStrava()" style="padding: 10px; font-size: 16px;">
+    🔗 Connect to Strava
+  </button>
+  
+  <div id="status" style="margin-top: 20px; padding: 15px; border: 1px solid #ccc; min-height: 50px;">
+    Loading...
+  </div>
+
+  <script>
+    const DOMAIN = 'my-strava-lay6.vercel.app';     // From Vercel dashboard
+    const CLIENT_ID = '180222';              // From Strava dashboard
+
+    function connectStrava() {
+      const authUrl = `https://www.strava.com/oauth/authorize?` +
+        `client_id=${CLIENT_ID}&` +
+        `redirect_uri=https://${DOMAIN}/api/callback&` +
+        `response_type=code&` +
+        `scope=read_all,activity:read_all&approval_prompt=auto`;
+      window.location.href = authUrl;
+    }
+
+    function updateStatus() {
+      const connected = localStorage.getItem('strava_connected') === '1';
+      const statusEl = document.getElementById('status');
+      if (connected) {
+        statusEl.innerHTML = `
+          <strong>✅ Connected to Strava!</strong><br>
+          <button onclick="loadAllRides()" style="margin-top: 10px;">📊 Load All Rides</button>
+        `;
+      } else {
+        statusEl.innerHTML = 'Click "Connect to Strava" to start. After auth, your /api/callback must store token and set localStorage.';
+      }
+    }
+
+    async function loadAllRides() {
+      const token = localStorage.getItem('strava_token');
+      if (!token) {
+        document.getElementById('status').innerHTML = '❌ No token! Reconnect via Strava.';
+        return;
+      }
+
+      const statusEl = document.getElementById('status');
+      statusEl.innerHTML = '⏳ Loading all your rides...';
+
+      try {
+        let allRides = [];
+        let page = 1;
+        let hasMore = true;
+
+        // Fetch ALL pages (max 50 per page)
+        
+        while (hasMore) {
+          const res = await fetch(`https://www.strava.com/api/v3/athlete/activities?page=${page}&per_page=200`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+
+          const rides = await res.json();
+          if (!res.ok) throw new Error('API error: ' + (rides.message || res.statusText));
+          
+          allRides = allRides.concat(rides);
+//          hasMore = false;
+          hasMore = rides.length === 200;  // Continue if full page
+          page++;
+        } // while
+
+        // Display results
+        const recent = allRides /*.slice(0, 200)*/;  // Show 20 most recent
+        statusEl.innerHTML = '';
+        for (let i = 0; i < 500; i++){
+        let theDay = new Date(recent[i].start_date).getDay();
+        if (theDay == 0) {
+        statusEl.innerHTML += `
+ ${new Date(recent[i].start_date).toLocaleDateString()}|
+ ${recent[i].name}|
+                ${(recent[i].distance/1000).toFixed(1)}km|
+                ${(recent[i].total_elevation_gain).toFixed(0)}m|
+                ${Math.round(recent[i].moving_time/60)}|
+                ${Math.round(recent[i].elapsed_time/60)}
+                <br>
+            `;
+        } //if
+        } //for
+      } catch (error) {
+        statusEl.innerHTML = `<strong>❌ Error:</strong> ${error.message}<br>Token expired? Reconnect.`;
+      }
+    }
+
+    // Auto-update status on page load
+    updateStatus();
+  </script>
+</body>
+</html>

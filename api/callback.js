@@ -3,12 +3,12 @@ export default async function handler(req, res) {
   if (!code) return res.status(400).send('No code');
 
   try {
-    const tokenRes = await fetch('https://www.strava.com/api/v3/oauth/token', {
+    const tokenRes = await fetch('https://api.fitbit.com/oauth2/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
-        client_id: process.env.STRAVA_CLIENT_ID,
-        client_secret: process.env.STRAVA_CLIENT_SECRET,
+        client_id: process.env.FITBIT_CLIENT_ID,
+        client_secret: process.env.FITBIT_CLIENT_SECRET,
         code,
         grant_type: 'authorization_code'
       })
@@ -21,8 +21,8 @@ export default async function handler(req, res) {
     res.setHeader('Content-Type', 'text/html');
     res.send(`
       <script>
-        localStorage.setItem('strava_token', '${data.access_token}');
-        localStorage.setItem('strava_connected', '1');
+        localStorage.setItem('fitbit_token', '${data.access_token}');
+        localStorage.setItem('fitbit_connected', '1');
         window.location.href = '/';
       </script>
       <p>Success! Redirecting...</p>

@@ -7,10 +7,21 @@
 <body style="font-family: Arial; padding: 20px; max-width: 800px; margin: auto;">
   <h1>MyFitbit</h1>
 
-<button onclick="location.href='./callback.html'">Connect Fitbit</button>
-<div id="data"></div>
+<button onclick="connectFitbit()">Connect Fitbit</button>
+  <div id="data"></div>
 <script>
   if (location.search.includes('fitbit=authorized')) loadData();
+
+  function connectFitbit() {
+  const authUrl = `https://www.fitbit.com/oauth2/authorize?` +
+    `client_id=23TZ3L&` +  // Your Client ID
+    `redirect_uri=https://chr1sg1thub.github.io/MyFitbit/callback.html&` +
+    `response_type=token&` +
+    `scope=activity%20heartrate%20sleep`;  // Add scopes as needed
+  
+  location.href = authUrl;
+}
+
 
   async function loadData() {
     const token = localStorage.getItem('fitbit_token');

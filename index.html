@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Strava Cycling PWA</title>
+  <title>MyFitbit</title>
   <meta name="viewport" content="width=device-width">
 </head>
 <body style="font-family: Arial; padding: 20px; max-width: 800px; margin: auto;">
-  <h1>🚴 Strava Cycling App</h1>
+  <h1>MyFitbit</h1>
   
-  <button onclick="connectStrava()" style="padding: 10px; font-size: 16px;">
-    🔗 Connect to Strava
+  <button onclick="connectFitbit()" style="padding: 10px; font-size: 16px;">
+    🔗 Connect to Fitbit
   </button>
   
   <div id="status" style="margin-top: 20px; padding: 15px; border: 1px solid #ccc; min-height: 50px;">
@@ -16,35 +16,39 @@
   </div>
 
   <script>
-    const DOMAIN = 'my-strava-lay6.vercel.app';     // From Vercel dashboard
-    const CLIENT_ID = '180222';              // From Strava dashboard
+    const DOMAIN = 'my-fitbit.vercel.app';     // From Vercel dashboard
+    const CLIENT_ID = '23TZ3L';              // From Fitbit dashboard
 
-    function connectStrava() {
-      const authUrl = `https://www.strava.com/oauth/authorize?` +
+    function connectFitbit() {
+
+
+      https://www.fitbit.com/oauth2/authorize?response_type=token&client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_URI&scope=activity%20heartrate
+      
+      const authUrl = `www.fitbit.com/oauth2/authorize?` +
         `client_id=${CLIENT_ID}&` +
         `redirect_uri=https://${DOMAIN}/api/callback&` +
-        `response_type=code&` +
-        `scope=read_all,activity:read_all&approval_prompt=auto`;
+        `response_type=token&` +
+        `scope=activity%20heartrate`;
       window.location.href = authUrl;
     }
 
     function updateStatus() {
-      const connected = localStorage.getItem('strava_connected') === '1';
+      const connected = localStorage.getItem('fitbit_connected') === '1';
       const statusEl = document.getElementById('status');
       if (connected) {
         statusEl.innerHTML = `
-          <strong>✅ Connected to Strava!</strong><br>
+          <strong>✅ Connected to Fitbit!</strong><br>
           <button onclick="loadAllRides()" style="margin-top: 10px;">📊 Load All Rides</button>
         `;
       } else {
-        statusEl.innerHTML = 'Click "Connect to Strava" to start. After auth, your /api/callback must store token and set localStorage.';
+        statusEl.innerHTML = 'Click "Connect to Fitbit" to start. After auth, your /api/callback must store token and set localStorage.';
       }
     }
 
     async function loadAllRides() {
-      const token = localStorage.getItem('strava_token');
+      const token = localStorage.getItem('fitbit_token');
       if (!token) {
-        document.getElementById('status').innerHTML = '❌ No token! Reconnect via Strava.';
+        document.getElementById('status').innerHTML = '❌ No token! Reconnect via Fitbit.';
         return;
       }
 

@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   }
 
 //  const { endpoint = '/1/user/-/hrv/date/today.json', token } = req.query;
-   const { endpoint = '/1.2/user/-/sleep/date/today.json', token } = req.query;
+   const { endpoint = '/1.2/user/-/sleep/date/2026-03-15.json', token } = req.query;
  
   if (!token) {
     res.status(400).json({ error: 'No token' });

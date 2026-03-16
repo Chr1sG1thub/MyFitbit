@@ -5,6 +5,7 @@
   if (token) {
     localStorage.setItem('fitbit_token', token);
     localStorage.setItem('fitbit_expires', Date.now() + params.get('expires_in') * 1000);
+    alert('Ok');
     window.location.href = './?fitbit=authorized';  // Same domain!
   }
 </script>

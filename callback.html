@@ -1,18 +1,16 @@
 <!DOCTYPE html>
-<html>
-<head><title>Fitbit Auth Complete</title></head>
-<body>
-  <script>
-    const params = new URLSearchParams(window.location.hash.substring(1));
-    const token = params.get('access_token');
-    if (token) {
-      // Store in localStorage (for your PWA)
-      localStorage.setItem('fitbit_token', token);
-      // Redirect to your main app
-      window.location.href = 'https://my-fitbit.vercel.app/dashboard';
-    } else {
-      document.body.innerHTML = '<h1>Error: No token received</h1>';
-    }
-  </script>
-</body>
-</html>
+<script>
+  const params = new URLSearchParams(location.hash.slice(1));
+  const token = params.get('access_token');
+  const expiresIn = params.get('expires_in');
+  
+  if (token) {
+    localStorage.setItem('fitbit_token', token);
+    localStorage.setItem('fitbit_expires', Date.now() + parseInt(expiresIn) * 1000);
+    alert('Success! Token stored. Check console.');
+    console.log('Token:', token);  // Test it
+    window.location.href = 'https://my-fitbit.vercel.app/?fitbit=authorized';
+  } else {
+    document.body.innerHTML = '<h1>Error: No token in hash</h1><p>URL: ' + location.href + '</p>';
+  }
+</script>

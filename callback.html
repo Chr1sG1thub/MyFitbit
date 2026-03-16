@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <script>
   const params = new URLSearchParams(location.hash.slice(1));
+  alert(params);
   const token = params.get('access_token');
+  alert(token);
   const expiresIn = params.get('expires_in');
+  alert(expiresIn);
   
   if (token) {
             localStorage.setItem('fitbit_connected', '1');

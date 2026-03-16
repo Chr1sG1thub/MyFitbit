@@ -19,48 +19,29 @@
 
   <script>
 
-if (new URLSearchParams(location.search).get('fitbit') === 'authorized') {
-  loadFitbitData();
+const urlParams = new URLSearchParams(location.search);
+if (urlParams.get('fitbit') === 'authorized') {
+  const token = urlParams.get('token');
+  const expires = parseInt(urlParams.get('expires') || 0);
+  
+  if (token && Date.now() < expires) {
+    localStorage.setItem('fitbit_token', token);  // Now store locally
+    localStorage.setItem('fitbit_expires', expires);
+    loadFitbitData(token);  // Fetch wellness immediately
+  }
 }
 
-async function loadFitbitData() {
-  const token = localStorage.getItem('fitbit_token');
-  const expires = parseInt(localStorage.getItem('fitbit_expires') || 0);
+async function loadFitbitData(token) {
+  const activity = await fetch('https://api.fitbit.com/1/user/-/activities/date/today.json', {
+    headers: { Authorization: `Bearer ${token}` }
+  }).then(r => r.json());
   
-  if (!token || Date.now() > expires) {
-    alert('Token expired/missing. <a href="auth-link">Reconnect Fitbit</a>');
-    return;
-  }
-
-  try {
-    // Fetch daily wellness
-    const [activity, hr, sleep] = await Promise.all([
-      fetch('https://api.fitbit.com/1/user/-/activities/date/today.json', {
-        headers: { Authorization: `Bearer ${token}` }
-      }).then(r => r.json()),
-      fetch('https://api.fitbit.com/1/user/-/hr/date/today/1d.json', {
-        headers: { Authorization: `Bearer ${token}` }
-      }).then(r => r.json()),
-      fetch('https://api.fitbit.com/1.2/user/-/sleep/date/today.json', {
-        headers: { Authorization: `Bearer ${token}` }
-      }).then(r => r.json())
-    ]);
-
-    // Display table
-    document.body.innerHTML += `
-      <table border=1>
-        <tr><th>Metric</th><th>Value</th></tr>
-        <tr><td>Steps</td><td>${activity.summary.steps}</td></tr>
-        <tr><td>Resting HR</td><td>${hr.restingHeartRate || 'N/A'}</td></tr>
-        <tr><td>Sleep (min)</td><td>${sleep.summary.totalMinutesAsleep || 0}</td></tr>
-        <tr><td>Floors</td><td>${activity.summary.floors}</td></tr>
-      </table>
-      <button onclick="syncToIntervals()">Sync to Intervals.icu</button>
-    `;
-  } catch (err) {
-    console.error('API error:', err);
-    alert('API failed—token issue?');
-  }
+  document.body.innerHTML += `
+    <h2>Today's Data</h2>
+    <p>Steps: ${activity.summary.steps}</p>
+    <button onclick="syncToIntervals()">Push to Intervals.icu</button>
+  `;
+}
 }
 
 /*async function syncToIntervals() {

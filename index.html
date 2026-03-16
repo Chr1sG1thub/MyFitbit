@@ -50,11 +50,18 @@
     async function loadAllRides() {
      try {
 const token = localStorage.getItem('fitbit_token');
-if (token && Date.now() < localStorage.getItem('fitbit_expires')) {
-  fetch('https://api.fitbit.com/1/user/-/activities/date/today.json', {
-    headers: { 'Authorization': `Bearer ${token}` }
-  }).then(r => r.json()).then(data => {
-    console.log('Steps:', data.summary.steps);
+if (!token) return alert('No token—reauth');
+
+// Daily wellness (today's data)
+Promise.all([
+  fetch('https://api.fitbit.com/1/user/-/activities/date/today.json', { headers: { Authorization: `Bearer ${token}` } }),
+  fetch('https://api.fitbit.com/1/user/-/hr/date/today/1d.json', { headers: { Authorization: `Bearer ${token}` } }),
+  fetch('https://api.fitbit.com/1.2/user/-/sleep/date/today.json', { headers: { Authorization: `Bearer ${token}` } })
+]).then(async ([activity, hr, sleep]) => {
+  const data = await Promise.all([activity.json(), hr.json(), sleep.json()]);
+  displayWellness(data);  // Render table
+  document.getElementById('sync-btn').onclick = () => pushToIntervals(data);
+});
     // Push to intervals.icu
   });
 }

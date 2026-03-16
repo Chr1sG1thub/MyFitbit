@@ -18,22 +18,6 @@
   </div>
 
   <script>
-    const DOMAIN = 'my-fitbit.vercel.app';     // From Vercel dashboard
-    const CLIENT_ID = '23TZ3L';              // From Fitbit dashboard
-
-    function connectFitbit() {
-
-
-//      https://www.fitbit.com/oauth2/authorize?response_type=token&client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_URI&scope=activity%20heartrate
-      
-
-      
-      
-      const authUrl = `https://www.fitbit.com/oauth2/authorize?client_id=23TZ3L&redirect_uri=https://chr1sg1thub.github.io/MyFitbit/callback.html&response_type=token&scope=activity%20heartrate
-`;
-      window.location.href = authUrl;
-    }
-
     function updateStatus() {
       const connected = localStorage.getItem('fitbit_connected') === '1';
       const statusEl = document.getElementById('status');

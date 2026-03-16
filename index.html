@@ -32,7 +32,7 @@ async function loadData() {
   
   document.getElementById('data').innerHTML = `
     <h2>Today</h2>
-    <p>Steps: ${data}</p>
+    <p>HRV: ${data.hrv[0].value.dailyRmssd}</p>
   `;
 }
 </script>

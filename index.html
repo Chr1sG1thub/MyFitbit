@@ -23,20 +23,18 @@
 }
 
 
-  async function loadData() {
-    const token = localStorage.getItem('fitbit_token');
-    if (!token) return document.getElementById('data').innerHTML = 'No token';
+async function loadData() {
+  const token = localStorage.getItem('fitbit_token');
+  document.getElementById('data').innerHTML = 'Loading...';
 
-    const res = await fetch('https://api.fitbit.com/1/user/-/activities/date/today.json', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const data = await res.json();
-    document.getElementById('data').innerHTML = `
-      <h2>Today</h2>
-      <p>Steps: ${data.summary.steps}</p>
-      <button onclick="syncIntervals()">Sync Intervals.icu</button>
-    `;
-  }
+  const res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?token=${encodeURIComponent(token)}`);
+  const data = await res.json();
+  
+  document.getElementById('data').innerHTML = `
+    <h2>Today</h2>
+    <p>Steps: ${data.summary.steps}</p>
+  `;
+}
 </script>
 
 </body>

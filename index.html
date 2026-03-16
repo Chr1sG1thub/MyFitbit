@@ -18,18 +18,6 @@
   </div>
 
   <script>
-    function updateStatus() {
-      const connected = localStorage.getItem('fitbit_connected') === '1';
-      const statusEl = document.getElementById('status');
-      if (connected) {
-        statusEl.innerHTML = `
-          <strong>✅ Connected to Fitbit!</strong><br>
-          <button onclick="loadAllRides()" style="margin-top: 10px;">📊 Load All Rides</button>
-        `;
-      } else {
-        statusEl.innerHTML = 'Click "Connect to Fitbit" to start. After auth, your /api/callback must store token and set localStorage.';
-      }
-    }
 
 if (new URLSearchParams(location.search).get('fitbit') === 'authorized') {
   loadFitbitData();
@@ -91,8 +79,5 @@ async function loadFitbitData() {
 }*/
 </script>
 
-    // Auto-update status on page load
-    updateStatus();
-  </script>
 </body>
 </html>

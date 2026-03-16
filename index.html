@@ -7,57 +7,25 @@
 <body style="font-family: Arial; padding: 20px; max-width: 800px; margin: auto;">
   <h1>MyFitbit</h1>
 
-  <a href="https://www.fitbit.com/oauth2/authorize?client_id=23TZ3L&redirect_uri=https://chr1sg1thub.github.io/MyFitbit/callback.html&response_type=token&scope=activity%20heartrate">
-  Connect Fitbit
-</a>
-  
+<button onclick="location.href='./callback.html'">Connect Fitbit</button>
+<div id="data"></div>
+<script>
+  if (location.search.includes('fitbit=authorized')) loadData();
 
-  
-  <div id="status" style="margin-top: 20px; padding: 15px; border: 1px solid #ccc; min-height: 50px;">
-    Loading...
-  </div>
+  async function loadData() {
+    const token = localStorage.getItem('fitbit_token');
+    if (!token) return document.getElementById('data').innerHTML = 'No token';
 
-  <script>
-
-const urlParams = new URLSearchParams(location.search);
-if (urlParams.get('fitbit') === 'authorized') {
-  const token = urlParams.get('token');
-  const expires = parseInt(urlParams.get('expires') || 0);
-  
-  if (token && Date.now() < expires) {
-    localStorage.setItem('fitbit_token', token);  // Now store locally
-    localStorage.setItem('fitbit_expires', expires);
-    loadFitbitData(token);  // Fetch wellness immediately
+    const res = await fetch('https://api.fitbit.com/1/user/-/activities/date/today.json', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await res.json();
+    document.getElementById('data').innerHTML = `
+      <h2>Today</h2>
+      <p>Steps: ${data.summary.steps}</p>
+      <button onclick="syncIntervals()">Sync Intervals.icu</button>
+    `;
   }
-}
-
-async function loadFitbitData(token) {
-  const activity = await fetch('https://api.fitbit.com/1/user/-/activities/date/today.json', {
-    headers: { Authorization: `Bearer ${token}` }
-  }).then(r => r.json());
-  
-  document.body.innerHTML += `
-    <h2>Today's Data</h2>
-    <p>Steps: ${activity.summary.steps}</p>
-    <button onclick="syncToIntervals()">Push to Intervals.icu</button>
-  `;
-}
-
-
-/*async function syncToIntervals() {
-  // Use your intervals API key + athlete ID
-  const formData = new FormData();
-  formData.append('wsteps', 12345);  // From fetched data
-  formData.append('wrhr', 58);
-  // Add more fields
-
-  await fetch('https://intervals.icu/api/v1/athlete/YOUR_ATHLETE_ID/wellness', {
-    method: 'POST',
-    headers: { Authorization: 'Bearer YOUR_API_KEY' },
-    body: formData
-  });
-  alert('Synced!');
-}*/
 </script>
 
 </body>

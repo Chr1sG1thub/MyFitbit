@@ -1,7 +1,21 @@
 export default async function handler(req, res) {
-  alert(req);
+  const origin = req.headers.origin || '';
+
+  // Allow your GitHub Pages origin
+  const allowedOrigins = ['https://chr1sg1thub.github.io'];
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'false');
+
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   const { endpoint = '/1/user/-/activities/date/today.json', token } = req.query;
-  
   if (!token) return res.status(400).json({ error: 'No token' });
 
   try {
@@ -9,8 +23,8 @@ export default async function handler(req, res) {
       headers: { Authorization: `Bearer ${token}` }
     });
     const data = await apiRes.json();
-    res.json(data);
+    return res.status(apiRes.status).json(data);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 }

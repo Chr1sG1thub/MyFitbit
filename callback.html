@@ -2,13 +2,9 @@
 <script>
   const params = new URLSearchParams(location.hash.slice(1));
   const token = params.get('access_token');
-  const expiresIn = params.get('expires_in');
-  
   if (token) {
-    // Pass token in URL (no localStorage needed)
-    const url = `https://my-fitbit.vercel.app/?fitbit=authorized&token=${encodeURIComponent(token)}&expires=${Date.now() + parseInt(expiresIn) * 1000}`;
-    window.location.href = url;
-  } else {
-    document.body.innerHTML = '<h1>No token</h1><p>' + location.href + '</p>';
+    localStorage.setItem('fitbit_token', token);
+    localStorage.setItem('fitbit_expires', Date.now() + params.get('expires_in') * 1000);
+    window.location.href = './?fitbit=authorized';  // Same domain!
   }
 </script>

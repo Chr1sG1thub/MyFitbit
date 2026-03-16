@@ -1,21 +1,14 @@
 <!DOCTYPE html>
 <script>
   const params = new URLSearchParams(location.hash.slice(1));
-  alert(params);
   const token = params.get('access_token');
-  alert(token);
   const expiresIn = params.get('expires_in');
-  alert(expiresIn);
   
   if (token) {
-            localStorage.setItem('fitbit_connected', '1');
-
-    localStorage.setItem('fitbit_token', token);
-    localStorage.setItem('fitbit_expires', Date.now() + parseInt(expiresIn) * 1000);
-    alert('Success! Token stored. Check console.');
-    console.log('Token:', token);  // Test it
-    window.location.href = 'https://my-fitbit.vercel.app/?fitbit=authorized';
+    // Pass token in URL (no localStorage needed)
+    const url = `https://my-fitbit.vercel.app/?fitbit=authorized&token=${encodeURIComponent(token)}&expires=${Date.now() + parseInt(expiresIn) * 1000}`;
+    window.location.href = url;
   } else {
-    document.body.innerHTML = '<h1>Error: No token in hash</h1><p>URL: ' + location.href + '</p>';
+    document.body.innerHTML = '<h1>No token</h1><p>' + location.href + '</p>';
   }
 </script>

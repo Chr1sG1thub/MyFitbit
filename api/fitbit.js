@@ -1,4 +1,5 @@
 export default async function handler(req, res) {
+  alert(req);
   const { endpoint = '/1/user/-/activities/date/today.json', token } = req.query;
   
   if (!token) return res.status(400).json({ error: 'No token' });

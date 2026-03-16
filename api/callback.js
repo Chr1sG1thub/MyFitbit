@@ -1,33 +1,34 @@
 export default async function handler(req, res) {
-  const code = req.query.code;
-  if (!code) return res.status(400).send('No code');
-
   try {
+    const { code, state, error } = req.query;  // GET query from redirect
+    if (error || !code) {
+      return res.status(400).json({ error: error || 'No code' });
+    }
+
+    const body = new URLSearchParams({
+      grant_type: 'authorization_code',
+      client_id: '23TZ3L',
+      client_secret: process.env.FITBIT_CLIENT_SECRET,
+      redirect_uri: 'https://my-fitbit.vercel.app/api/callback',
+      code
+    });
+
     const tokenRes = await fetch('https://api.fitbit.com/oauth2/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        client_id: process.env.FITBIT_CLIENT_ID,
-        client_secret: process.env.FITBIT_CLIENT_SECRET,
-        code,
-        grant_type: 'authorization_code'
-      })
+      body: body.toString()
     });
-    const data = await tokenRes.json();
 
-    if (!tokenRes.ok) throw new Error(data.message);
+    if (!tokenRes.ok) {
+      const err = await tokenRes.text();
+      throw new Error(`Token fetch failed: ${tokenRes.status} ${err}`);
+    }
 
-    // Store token + success flag, then redirect
-    res.setHeader('Content-Type', 'text/html');
-    res.send(`
-      <script>
-        localStorage.setItem('fitbit_token', '${data.access_token}');
-        localStorage.setItem('fitbit_connected', '1');
-        window.location.href = '/';
-      </script>
-      <p>Success! Redirecting...</p>
-    `);
+    const tokens = await tokenRes.json();
+    // TODO: Store tokens securely (Vercel KV, httpOnly cookie, or redirect with short-lived)
+    res.redirect(302, `/dashboard?token=${tokens.access_token}`);
   } catch (err) {
-    res.status(500).send('Error: ' + err.message);
+    console.error('OAuth callback error:', err);
+    res.status(500).json({ error: err.message });
   }
 }

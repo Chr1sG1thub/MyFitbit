@@ -31,28 +31,66 @@
       }
     }
 
-    async function loadAllRides() {
-     try {
-const token = localStorage.getItem('fitbit_token');
-if (!token) return alert('No token—reauth');
+<script>
+if (new URLSearchParams(location.search).get('fitbit') === 'authorized') {
+  loadFitbitData();
+}
 
-// Daily wellness (today's data)
-Promise.all([
-  fetch('https://api.fitbit.com/1/user/-/activities/date/today.json', { headers: { Authorization: `Bearer ${token}` } }),
-  fetch('https://api.fitbit.com/1/user/-/hr/date/today/1d.json', { headers: { Authorization: `Bearer ${token}` } }),
-  fetch('https://api.fitbit.com/1.2/user/-/sleep/date/today.json', { headers: { Authorization: `Bearer ${token}` } })
-]).then(async ([activity, hr, sleep]) => {
-  const data = await Promise.all([activity.json(), hr.json(), sleep.json()]);
-  displayWellness(data);  // Render table
-  document.getElementById('sync-btn').onclick = () => pushToIntervals(data);
-});
+async function loadFitbitData() {
+  const token = localStorage.getItem('fitbit_token');
+  const expires = parseInt(localStorage.getItem('fitbit_expires') || 0);
+  
+  if (!token || Date.now() > expires) {
+    alert('Token expired/missing. <a href="auth-link">Reconnect Fitbit</a>');
+    return;
+  }
 
+  try {
+    // Fetch daily wellness
+    const [activity, hr, sleep] = await Promise.all([
+      fetch('https://api.fitbit.com/1/user/-/activities/date/today.json', {
+        headers: { Authorization: `Bearer ${token}` }
+      }).then(r => r.json()),
+      fetch('https://api.fitbit.com/1/user/-/hr/date/today/1d.json', {
+        headers: { Authorization: `Bearer ${token}` }
+      }).then(r => r.json()),
+      fetch('https://api.fitbit.com/1.2/user/-/sleep/date/today.json', {
+        headers: { Authorization: `Bearer ${token}` }
+      }).then(r => r.json())
+    ]);
 
+    // Display table
+    document.body.innerHTML += `
+      <table border=1>
+        <tr><th>Metric</th><th>Value</th></tr>
+        <tr><td>Steps</td><td>${activity.summary.steps}</td></tr>
+        <tr><td>Resting HR</td><td>${hr.restingHeartRate || 'N/A'}</td></tr>
+        <tr><td>Sleep (min)</td><td>${sleep.summary.totalMinutesAsleep || 0}</td></tr>
+        <tr><td>Floors</td><td>${activity.summary.floors}</td></tr>
+      </table>
+      <button onclick="syncToIntervals()">Sync to Intervals.icu</button>
+    `;
+  } catch (err) {
+    console.error('API error:', err);
+    alert('API failed—token issue?');
+  }
+}
 
-      } catch (error) {
-        statusEl.innerHTML = `<strong>❌ Error:</strong> ${error.message}<br>Token expired? Reconnect.`;
-      }
-    }
+/*async function syncToIntervals() {
+  // Use your intervals API key + athlete ID
+  const formData = new FormData();
+  formData.append('wsteps', 12345);  // From fetched data
+  formData.append('wrhr', 58);
+  // Add more fields
+
+  await fetch('https://intervals.icu/api/v1/athlete/YOUR_ATHLETE_ID/wellness', {
+    method: 'POST',
+    headers: { Authorization: 'Bearer YOUR_API_KEY' },
+    body: formData
+  });
+  alert('Synced!');
+}*/
+</script>
 
     // Auto-update status on page load
     updateStatus();

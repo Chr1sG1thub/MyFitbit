@@ -6,10 +6,12 @@
 </head>
 <body style="font-family: Arial; padding: 20px; max-width: 800px; margin: auto;">
   <h1>MyFitbit</h1>
+
+  <a href="https://www.fitbit.com/oauth2/authorize?client_id=23TZ3L&redirect_uri=https://chr1sg1thub.github.io/MyFitbit/callback.html&response_type=token&scope=activity%20heartrate">
+  Connect Fitbit
+</a>
   
-  <button onclick="connectFitbit()" style="padding: 10px; font-size: 16px;">
-    🔗 Connect to Fitbit
-  </button>
+
   
   <div id="status" style="margin-top: 20px; padding: 15px; border: 1px solid #ccc; min-height: 50px;">
     Loading...
@@ -48,9 +50,15 @@
     async function loadAllRides() {
      try {
 const token = localStorage.getItem('fitbit_token');
-fetch('https://api.fitbit.com/1/user/-/activities/date/today.json', {
-  headers: { Authorization: `Bearer ${token}` }
-}).then(r => r.json()).then(data => console.log(data.summary.steps));
+if (token && Date.now() < localStorage.getItem('fitbit_expires')) {
+  fetch('https://api.fitbit.com/1/user/-/activities/date/today.json', {
+    headers: { 'Authorization': `Bearer ${token}` }
+  }).then(r => r.json()).then(data => {
+    console.log('Steps:', data.summary.steps);
+    // Push to intervals.icu
+  });
+}
+
       } catch (error) {
         statusEl.innerHTML = `<strong>❌ Error:</strong> ${error.message}<br>Token expired? Reconnect.`;
       }

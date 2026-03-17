@@ -42,45 +42,59 @@ const dateStr = `${year}-${month}-${day}`;
 
   res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1/user/-/body/log/weight/date/${dateStr}.json&token=${encodeURIComponent(token)}`);
   data = await res.json();
+
+  const weight = data.weight[0].weight;
   
   document.getElementById('data').innerHTML += `
-    <p>Weight: ${data.weight[0].weight}</p>
+    <p>Weight: ${weight}</p>
   `;
   res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1.2/user/-/sleep/date/${dateStr}.json&token=${encodeURIComponent(token)}`);
   data = await res.json();
+
+  const minutesAsleep = data.sleep[0].minutesAsleep;
   
   document.getElementById('data').innerHTML += `
-    <p>Sleep: ${data.sleep[0].minutesAsleep}</p>
+    <p>Sleep: ${minutesAsleep}</p>
   `;
   res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1/user/-/br/date/today.json&token=${encodeURIComponent(token)}`);
   data = await res.json();
+
+  const breathingRate = data.br[0].value.breathingRate;
   
   document.getElementById('data').innerHTML += `
-    <p>Breathing Rate: ${data.br[0].value.breathingRate}</p>
+    <p>Breathing Rate: ${breathingRate}</p>
   `;
   res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1/user/-/spo2/date/today.json&token=${encodeURIComponent(token)}`);
   data = await res.json();
+
+  const spo2 = data.value.avg;
   
   document.getElementById('data').innerHTML += `
-    <p>SPO2: ${data.value.avg}</p>
+    <p>SPO2: ${spo2}</p>
   `;
   res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1/user/-/activities/heart/date/today/1d.json&token=${encodeURIComponent(token)}`);
   data = await res.json();
   
-  document.getElementById('data').innerHTML += `
-    <p>Resting Heart Rate: ${data['activities-heart'][0].value.restingHeartRate}</p>
+  const restingHeartRate = data['activities-heart'][0].value.restingHeartRate;
+  
+    document.getElementById('data').innerHTML += `
+    <p>Resting Heart Rate: ${restingHeartRate}</p>
   `;
   res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1/user/-/hrv/date/today.json&token=${encodeURIComponent(token)}`);
   data = await res.json();
+
+  const hrv = data.hrv[0].value.dailyRmssd;
   
   document.getElementById('data').innerHTML += `
-    <p>HRV: ${data.hrv[0].value.dailyRmssd}</p>
+    <p>HRV: ${hrv}</p>
   `;
   res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1/user/-/cardioscore/date/today.json&token=${encodeURIComponent(token)}`);
   data = await res.json();
+
+  const vo2Max = data.cardioScore[0].value.vo2Max;
   
   document.getElementById('data').innerHTML += `
-    <p>Cardio Fitness Score: ${data.cardioScore[0].value.vo2Max}</p>
+    <p>Cardio Fitness Score: ${vo2Max}</p>
   `;
 }
 </script>

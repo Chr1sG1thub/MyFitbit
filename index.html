@@ -75,7 +75,7 @@ const dateStr = `${year}-${month}-${day}`;
   data = await res.json();
   
   document.getElementById('data').innerHTML += `
-    <p>Weight: ${data.cardioScore[0].value.vo2Max}</p>
+    <p>Weight: ${data.weight[0].weight}</p>
   `;
 }
 </script>

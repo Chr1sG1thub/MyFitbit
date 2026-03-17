@@ -18,7 +18,7 @@
     `client_id=23TZ3L&` +  // Your Client ID
     `redirect_uri=https://chr1sg1thub.github.io/MyFitbit/callback.html&` +
     `response_type=token&` +
-    `scope=activity%20heartrate%20sleep%20respiratory_rate%20oxygen_saturation%20cardio_fitness`;  // Add scopes as needed
+    `scope=activity%20heartrate%20sleep%20respiratory_rate%20oxygen_saturation%20cardio_fitness%20weight`;  // Add scopes as needed
   
   location.href = authUrl;
 }
@@ -71,8 +71,14 @@ const dateStr = `${year}-${month}-${day}`;
   document.getElementById('data').innerHTML += `
     <p>Cardio Fitness Score: ${data.cardioScore[0].value.vo2Max}</p>
   `;
+  res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1/user/-/body/log/weight/date/${dateStr}.json&token=${encodeURIComponent(token)}`);
+  data = await res.json();
+  
+  document.getElementById('data').innerHTML += `
+    <p>Weight: ${data.cardioScore[0].value.vo2Max}</p>
+  `;
 }
 </script>
-
+/1/user/-/body/log/weight/date/{date}.json
 </body>
 </html>

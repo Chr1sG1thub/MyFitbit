@@ -12,6 +12,7 @@
 <script>
   if (location.search.includes('fitbit=authorized')) loadData();
 
+//--------------------------------------------------------------------------------
   function connectFitbit() {
   const authUrl = `https://www.fitbit.com/oauth2/authorize?` +
     `client_id=23TZ3L&` +  // Your Client ID
@@ -22,7 +23,7 @@
   location.href = authUrl;
 }
 
-
+//--------------------------------------------------------------------------------
 async function loadData() {
   const token = localStorage.getItem('fitbit_token');
   document.getElementById('data').innerHTML = 'Loading...';

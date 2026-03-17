@@ -28,6 +28,12 @@ async function loadData() {
   const token = localStorage.getItem('fitbit_token');
   document.getElementById('data').innerHTML = 'Loading...';
 
+  const now = new Date();
+const year = now.getFullYear();
+const month = String(now.getMonth() + 1).padStart(2, '0');
+const day = String(now.getDate()).padStart(2, '0');
+const dateStr = `${year}-${month}-${day}`;
+
   let res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?token=${encodeURIComponent(token)}`);
   let data = await res.json();
   
@@ -35,7 +41,7 @@ async function loadData() {
     <h2>Today</h2>
     <p>HRV: ${data.hrv[0].value.dailyRmssd}</p>
   `;
-  res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1.2/user/-/sleep/date/today.json&token=${encodeURIComponent(token)}`);
+  res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1.2/user/-/sleep/date/${dateStr}.json&token=${encodeURIComponent(token)}`);
   data = await res.json();
   
   document.getElementById('data').innerHTML += `

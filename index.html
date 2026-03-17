@@ -47,6 +47,12 @@ const dateStr = `${year}-${month}-${day}`;
   document.getElementById('data').innerHTML += `
     <p>Sleep: ${data.sleep[0].minutesAsleep}</p>
   `;
+  res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1/user/-/br/date/today.json&token=${encodeURIComponent(token)}`);
+  data = await res.json();
+  
+  document.getElementById('data').innerHTML += `
+    <p>Sleep: ${data}</p>
+  `;
 }
 </script>
 

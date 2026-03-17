@@ -18,7 +18,7 @@
     `client_id=23TZ3L&` +  // Your Client ID
     `redirect_uri=https://chr1sg1thub.github.io/MyFitbit/callback.html&` +
     `response_type=token&` +
-    `scope=activity%20heartrate%20sleep%20respiratory_rate%20oxygen_saturation`;  // Add scopes as needed
+    `scope=activity%20heartrate%20sleep%20respiratory_rate%20oxygen_saturation%20cardio_fitness`;  // Add scopes as needed
   
   location.href = authUrl;
 }
@@ -64,6 +64,12 @@ const dateStr = `${year}-${month}-${day}`;
   
   document.getElementById('data').innerHTML += `
     <p>Resting Heart Rate: ${data['activities-heart'][0].value.restingHeartRate}</p>
+  `;
+  res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1/user/-/cardioscore/date/today.json&token=${encodeURIComponent(token)}`);
+  data = await res.json();
+  
+  document.getElementById('data').innerHTML += `
+    <p>Cardio Fitness Score: ${data['activities-heart'][0].value.restingHeartRate}</p>
   `;
 }
 </script>

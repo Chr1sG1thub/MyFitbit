@@ -51,7 +51,7 @@ const dateStr = `${year}-${month}-${day}`;
   data = await res.json();
   
   document.getElementById('data').innerHTML += `
-    <p>Sleep: ${data}</p>
+    <p>Breathing Rate: ${data.br[0].value.breathingRate}</p>
   `;
 }
 </script>

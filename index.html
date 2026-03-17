@@ -35,7 +35,7 @@ async function loadData() {
     <h2>Today</h2>
     <p>HRV: ${data.hrv[0].value.dailyRmssd}</p>
   `;
-  res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1.2/user/-/sleep/date/2026-03-17.json&token=${encodeURIComponent(token)}`);
+  res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1.2/user/-/sleep/date/today.json&token=${encodeURIComponent(token)}`);
   data = await res.json();
   
   document.getElementById('data').innerHTML += `

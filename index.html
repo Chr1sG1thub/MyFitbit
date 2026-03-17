@@ -59,6 +59,12 @@ const dateStr = `${year}-${month}-${day}`;
   document.getElementById('data').innerHTML += `
     <p>SPO2: ${data.value.avg}</p>
   `;
+  res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1/user/-/activities/heart/date/today/1d.json&token=${encodeURIComponent(token)}`);
+  data = await res.json();
+  
+  document.getElementById('data').innerHTML += `
+    <p>Resting Heart Rate: ${data.activities-heart.value.restingHeartRate}</p>
+  `;
 }
 </script>
 

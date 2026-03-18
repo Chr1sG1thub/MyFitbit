@@ -43,56 +43,70 @@ const dateStr = `${year}-${month}-${day}`;
   res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1/user/-/body/log/weight/date/${dateStr}.json&token=${encodeURIComponent(token)}`);
   data = await res.json();
 
-  const weight = data.weight[0].weight;
+  let weight = null;
+  if (data?.weight[0]?.weight? !== undefined) weight = data.weight[0].weight;
   
   document.getElementById('data').innerHTML += `
     <p>Weight: ${weight}</p>
   `;
+  
   res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1.2/user/-/sleep/date/${dateStr}.json&token=${encodeURIComponent(token)}`);
   data = await res.json();
 
-  const minutesAsleep = data.sleep[0].minutesAsleep;
+  let minutesAsleep = null;
+  if (data?.sleep[0]?.minutesAsleep? !== undefined) minutesAsleep = data.sleep[0].minutesAsleep;
   
   document.getElementById('data').innerHTML += `
     <p>Sleep: ${minutesAsleep}</p>
   `;
+  
   res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1/user/-/br/date/today.json&token=${encodeURIComponent(token)}`);
   data = await res.json();
 
-  const breathingRate = data.br[0].value.breathingRate;
+  let breathingRate = null;
+  if (data?.br[0]?.value?.breathingRate? !== undefined) breathingRate = data.br[0].value.breathingRate;
   
   document.getElementById('data').innerHTML += `
     <p>Breathing Rate: ${breathingRate}</p>
   `;
+  
   res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1/user/-/spo2/date/today.json&token=${encodeURIComponent(token)}`);
   data = await res.json();
 
-  const spo2 = data.value.avg;
+  let spo2 = null;
+  if (data?.value?.avg? !== undefined) spo2 = data.value.avg;
   
   document.getElementById('data').innerHTML += `
     <p>SPO2: ${spo2}</p>
   `;
+  
   res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1/user/-/activities/heart/date/today/1d.json&token=${encodeURIComponent(token)}`);
   data = await res.json();
   
-  const restingHeartRate = data['activities-heart'][0].value.restingHeartRate;
+  let restingHeartRate = null;
+  if ( data['activities-heart'][0]?.value?.restingHeartRate? !== undefined) restingHeartRate = data['activities-heart'][0].value.restingHeartRate;
   
     document.getElementById('data').innerHTML += `
     <p>Resting Heart Rate: ${restingHeartRate}</p>
   `;
+  
   res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1/user/-/hrv/date/today.json&token=${encodeURIComponent(token)}`);
   data = await res.json();
 
-  const hrv = data.hrv[0].value.dailyRmssd;
+  let hrv = null;
+  if ( data?.hrv[0]?.value?.dailyRmssd? !== undefined) hrv =  data.hrv[0].value.dailyRmssd;
+   const hrv = data.hrv[0].value.dailyRmssd;
   
   document.getElementById('data').innerHTML += `
     <p>HRV: ${hrv}</p>
   `;
+  
   res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1/user/-/cardioscore/date/today.json&token=${encodeURIComponent(token)}`);
   data = await res.json();
 
-  const vo2Max = data.cardioScore[0].value.vo2Max;
-  
+  let vo2Max = null;
+  if ( data?.cardioScore[0]?.value?.vo2Max? !== undefined) vo2Max =  data.cardioScore[0].value.vo2Max;
+
   document.getElementById('data').innerHTML += `
     <p>Cardio Fitness Score: ${vo2Max}</p>
   `;

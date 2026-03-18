@@ -95,7 +95,6 @@ const dateStr = `${year}-${month}-${day}`;
 
   let hrv = null;
   if ( data?.hrv[0]?.value?.dailyRmssd !== undefined) hrv =  data.hrv[0].value.dailyRmssd;
-   const hrv = data.hrv[0].value.dailyRmssd;
   
   document.getElementById('data').innerHTML += `
     <p>HRV: ${hrv}</p>

@@ -103,8 +103,13 @@ const dateStr = `${year}-${month}-${day}`;
   res = await fetch(`https://my-fitbit.vercel.app/api/fitbit?endpoint=/1/user/-/cardioscore/date/today.json&token=${encodeURIComponent(token)}`);
   data = await res.json();
 
-  let vo2Max = null;
-  if ( data?.cardioScore[0]?.value?.vo2Max !== undefined) vo2Max =  data.cardioScore[0].value.vo2Max;
+  let vo2MaxStr = null;
+  if ( data?.cardioScore[0]?.value?.vo2Max !== undefined) vo2MaxStr =  data.cardioScore[0].value.vo2Max;
+
+  const parts = vo2MaxStr.split('-');
+const vo2MaxMin = parseInt(parts[0], 10);
+const vo2MaxMax = parseInt(parts[1], 10);
+  const vo2Max = (vo2MaxMax + vo2MaxMin)/2;
 
   document.getElementById('data').innerHTML += `
     <p>Cardio Fitness Score: ${vo2Max}</p>
